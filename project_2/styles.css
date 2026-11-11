@@ -1,0 +1,271 @@
+/*
+stylesheet is a bit of a mess.
+I used `absolute` values a few times... just to make things work.
+Will need to go back and attempt to adjust and fix non-responsive values.
+*/
+
+/* global variables and resets */
+:root {
+    --searing-red: #D92216;
+    --ember-glow: rgba(217, 34, 22, 0.6);
+    --terminal-teal: #3B596B;
+    --accent-color: #F5F5F5;
+    --door-speed: 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+    --bg-color-fallback: #050404;
+}
+
+*, *::before, *::after {
+    cursor: url('Cursor50x50.png'), auto;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color-fallback);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.FullScreen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100vw; 
+    height: auto;
+    min-height: 812px;
+    min-width: 1443.5px; 
+    flex-shrink: 0; 
+    transition: width 0.1s ease-out;
+    container-type: size;
+    container-name: virtual-monitor;
+    z-index: 1;
+}
+
+/* animations */
+@keyframes terminalFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; filter: brightness(1); }
+    20%, 24%, 55% { opacity: 0.4; filter: brightness(1.5); }
+}
+.flicker-slow { animation: terminalFlicker 4s infinite; }
+.flicker-slow-reverse { animation: terminalFlicker 5s infinite reverse; }
+.flicker-fast { animation: terminalFlicker 2s infinite; }
+
+/* background layers */
+.base-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('VideoGame.StructureLab.png') no-repeat center center;
+    background-size: cover;
+    z-index: 1;
+}
+
+.frame-layer {
+    position: absolute;
+    top: -5cqw;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    background: url('Page1Border-blurred.png') no-repeat center center;
+    background-size: 100% 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Airlock splash screen */
+#airlock-splash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color-fallback);
+}
+
+.door {
+    width: 50%; height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #0A1318;
+    transition: transform var(--door-speed);
+}
+
+.left-door {
+    background-image: url('LeftDoor838x938.jpg');
+    background-position: left center;
+    position: relative;
+}
+
+.right-door {
+    background-image: url('RightDoor838x938.jpg');
+    background-position: right center;
+}
+
+.tech-screen-container {
+    position: absolute;
+    top: 49%; 
+    left: 53.2%;
+    transform: translate(-50%, -50%);
+    width: 37%; 
+    text-align: center;
+}
+
+#initializing-text {
+    color: var(--searing-red);
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 1.13cqw;
+    text-shadow: 0 0 10px var(--searing-red);
+}
+
+.open-left { transform: translateX(-100%); }
+.open-right { transform: translateX(100%); }
+
+/* the terminal UI components */
+.terminal-container {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease-in;
+}
+
+.center-display {
+    color: var(--searing-red);
+    font-size: 2cqw; 
+    letter-spacing: 0.5cqw;
+    text-shadow: 0 0 .5cqw var(--ember-glow);
+    user-select: none;
+    z-index: 6;
+    text-align: center;
+}
+
+.center-display a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.center-display .title-tab {
+    position: absolute;
+    top: 19%;
+    left: 40%;
+    right: 40%;
+    color: var(--ember-glow);
+    font-size: 1.3cqw;
+    letter-spacing: 0cqw;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.center-display-stats {
+    position: absolute;
+    top: 8.7%;
+    color: var(--ember-glow);
+    font-size: 1cqw;
+    letter-spacing: 0cqw;
+    text-shadow: 0 0 1cqw rgb(255, 0, 0);
+    text-align: center;
+}
+
+.center-display .separator { margin: 0 15px; opacity: 0.5; }
+.center-display-small {
+    font-size: 1cqw;
+    color: inherit;
+    text-transform: uppercase;
+}
+
+.center-display-button:hover {
+    color: var(--accent-color);
+    text-shadow: 1px 0px 10px;
+}
+
+.center-display-button:active {
+    color: var(--ember-glow);
+    text-shadow: 1px 0px 10px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* Consolidated Form Buttons */
+button[type="submit"], button[type="reset"] {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-radius: 1cqw;
+    box-shadow: rgba(217, 34, 22, 0.2) 0 3px 5px -1px, rgba(217, 34, 22, 0.14) 0 6px 10px 0;
+    color: var(--ember-glow);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1cqw;
+    padding: 0.25cqw 1cqw;
+    margin: 10px 5px;
+    position: relative;
+    transition: all 280ms cubic-bezier(.4, 0, .2, 1);
+    user-select: none;
+    touch-action: manipulation;
+}
+
+button[type="submit"]:hover, button[type="reset"]:hover {
+    background-color: rgba(217, 34, 22, 0.12);
+    color: var(--searing-red);
+    box-shadow: rgba(60, 64, 67, .3) 0 2px 3px 0, rgba(60, 64, 67, .15) 0 6px 10px 4px;
+}
+
+button[type="submit"]:active, button[type="reset"]:active {
+    box-shadow: 0 4px 4px 0 rgba(217, 34, 22, 0.3), 0 8px 12px 6px rgba(217, 34, 22, 0.15);
+    outline: none;
+}
+
+button[type="submit"]:focus, button[type="reset"]:focus {
+    outline: none;
+    border: 2px solid var(--ember-glow);
+}
+
+.plate-container {
+    position: absolute;
+    bottom: 10%;
+    left: 20%;
+    display: flex;
+    gap: 2%;
+    width: 60%;
+    justify-content: center;
+}
+
+.plate-btn {
+    width: 25%;
+    max-width: 257px;
+    background: none;
+    border: none;
+    transition: transform 0.1s ease, filter 0.2s ease;
+}
+
+.plate-btn img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.plate-btn:hover {
+    filter: drop-shadow(0 0 8px var(--searing-red)) brightness(1.2);
+    transform: translateY(-2px);
+}
+
+.plate-btn:active {
+    transform: translateY(2px) scale(0.98);
+    filter: drop-shadow(0 0 8px var(--searing-red)) brightness(0.9);
+}
